@@ -283,7 +283,12 @@ public class SessionManager {
         String lastResponse = "";
         try {
             // Get the list of friends from the api
-            lastResponse = httpClient.send(xboxFollowersRequest, HttpResponse.BodyHandlers.ofString()).body();
+            try{
+                lastResponse = httpClient.send(xboxFollowersRequest, HttpResponse.BodyHandlers.ofString()).body();
+            }catch(IOException ioe){
+                logger.info("Xbox live API return nothing");
+                return people;
+            }
             FollowerResponse xboxFollowerResponse = Constants.OBJECT_MAPPER.readValue(lastResponse, FollowerResponse.class);
 
             // Parse through the returned list to make sure we are friends and
