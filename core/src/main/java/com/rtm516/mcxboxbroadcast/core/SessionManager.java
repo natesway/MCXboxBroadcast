@@ -137,16 +137,20 @@ public class SessionManager {
      */
     private void createSession() throws SessionCreationException, SessionUpdateException {
         // Get the token for authentication
+        logger.info("トークンを取得します");
         XboxTokenInfo tokenInfo = getXboxToken();
         String token = tokenInfo.tokenHeader();
 
         // Update the current session infos XUID
+        logger.info("XUIDを設定します");
         this.sessionInfo.setXuid(tokenInfo.userXUID);
 
         // Create the RTA websocket connection
+        logger.info("ウェブソケットを構築します");
         setupWebsocket(token);
 
         // Wait and get the connection ID from the websocket
+        logger.info("コネクションIDを待機します");
         String connectionId;
         try {
             connectionId = waitForConnectionId().get();
@@ -155,12 +159,15 @@ public class SessionManager {
         }
 
         // Update the current session infos connection ID
+        logger.info("コネクションIDを設定します");
         this.sessionInfo.setConnectionId(connectionId);
 
         // Push the session information to the session directory
+        logger.info("セッションを更新します");
         updateSession();
 
         // Create the session handle request
+        logger.info("セッションハンドルリクエストを作成します");
         CreateHandleRequest createHandleContent = new CreateHandleRequest(
             1,
             "activity",
@@ -172,6 +179,7 @@ public class SessionManager {
         );
 
         // Make the request to create the session handle
+        logger.info("セッションハンドルの作成を要求します");
         HttpRequest createHandleRequest;
         try {
             createHandleRequest = HttpRequest.newBuilder()
@@ -186,6 +194,7 @@ public class SessionManager {
         }
 
         // Read the handle response
+        logger.info("セッションハンドルのレスポンスを取得します");
         HttpResponse<String> createHandleResponse;
         try {
             createHandleResponse = httpClient.send(createHandleRequest, HttpResponse.BodyHandlers.ofString());
@@ -194,6 +203,7 @@ public class SessionManager {
         }
 
         // Check to make sure the handle was created
+        logger.info("セッションハンドルの作成を確認します");
         if (createHandleResponse.statusCode() != 200 && createHandleResponse.statusCode() != 201) {
             throw new SessionCreationException("Unable to create session handle, got status " + createHandleResponse.statusCode() + " trying to create");
         }
