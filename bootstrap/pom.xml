@@ -50,7 +50,7 @@
     </dependencies>
 
     <modules>
-<!--        <module>geyser</module>-->
+        <module>geyser</module>
         <module>standalone</module>
     </modules>
 </project>
